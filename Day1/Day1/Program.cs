@@ -12,7 +12,7 @@ namespace Day1
             var rawInput = File.ReadAllLines("E:\\AdventOfCode\\AdventOfCode2023\\Day1\\Day1\\Input.txt");
             string[] input = new string[rawInput.Length];
 
-            // first part
+            // part one
             int sum = 0;
             for (int i = 0; i < rawInput.Length; i++)
             {
@@ -22,10 +22,10 @@ namespace Day1
                 {
                     str = string.Format("{0}{0}", str);
                 }
-                var firstAndLast = string.Format("{0}{1}", str[0], str[str.Length-1]);
+
+                var firstAndLast = string.Format("{0}{1}", str[0], str[str.Length - 1]);
                 input[i] = firstAndLast;
 
-                
                 sum += int.Parse(input[i]);
             }
 
@@ -44,27 +44,32 @@ namespace Day1
                     {
                         str += c;
                     }
-                    for (int j = 0; j < stringNumbers.Length; j++)
+                    else
                     {
-                        if (k + stringNumbers[j].Length > line.Length)
+                        for (int j = 0; j < stringNumbers.Length; j++)
                         {
-                            continue;
-                        }
-                        var subStr = line.Substring(k, stringNumbers[j].Length);
-                        if (subStr == stringNumbers[j])
-                        {
-                            str += (j + 1).ToString();
+                            if (k + stringNumbers[j].Length > line.Length)
+                            {
+                                continue;
+                            }
+
+                            var subStr = line.Substring(k, stringNumbers[j].Length);
+                            if (subStr == stringNumbers[j])
+                            {
+                                str += (j + 1).ToString();
+                            }
                         }
                     }
                 }
-                var firstAndLast = string.Format("{0}{1}", str[0], str[str.Length-1]);
+
+                var firstAndLast = string.Format("{0}{1}", str[0], str[str.Length - 1]);
                 input[i] = firstAndLast;
                 
                 sum += int.Parse(input[i]);
-                Console.WriteLine(sum);
-
             }
-            
+
+            Console.WriteLine(sum);
+
             Console.ReadLine();
         }
     }
