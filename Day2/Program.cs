@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Remoting;
 
 namespace Day2
 {
@@ -14,39 +12,64 @@ namespace Day2
             var rawInput = File.ReadAllLines(@"E:\AdventOfCode\AdventOfCode2023\Day2\Input.txt");
 
             int idSum = 0;
+            int powerSum = 0;
             for (int i = 0; i < rawInput.Length; i++)
             {
-                GameInfo temp = GameInfo.Parse(rawInput[i]);
-                bool validGame = false;
-                foreach (var set in temp.SetList)
+                int minRed = 0, minGreen = 0, minBlue = 0;
+                GameInfo gameInfo = GameInfo.Parse(rawInput[i]);
+                foreach (var setInfo in gameInfo.SetList)
                 {
-                    validGame = set.IsValidSet(new SetInfo(12, 13, 14));
-                    if (validGame == false)
-                    {
-                        break;
-                    }
+                    if (setInfo.RedAmount > minRed) { minRed = setInfo.RedAmount; }
+                    if (setInfo.GreenAmount > minGreen) { minGreen = setInfo.GreenAmount; }
+                    if (setInfo.BlueAmount > minBlue) { minBlue = setInfo.BlueAmount;}
                 }
 
-                if (validGame)
-                {
-                    idSum += temp.Id;
-                }
+                //partOne
+                //idSum = GetValidSum(gameInfo);
+
+                //part Two
+                powerSum += gameInfo.GetSetPower((minRed, minGreen, minBlue));
             }
 
             Console.WriteLine(idSum);
+            Console.WriteLine(powerSum);
             Console.ReadLine();
+        }
+
+        private static int GetValidSum(GameInfo gameInfo)
+        {
+            int idSum = 0;
+            bool validGame = false;
+            foreach (var set in gameInfo.SetList)
+            {
+                validGame = set.IsValidSet(new SetInfo(12, 13, 14));
+                if (validGame == false)
+                {
+                    break;
+                }
+            }
+            if (validGame)
+            {
+                idSum += gameInfo.Id;
+            }
+
+            return idSum;
         }
 
         public class GameInfo
         {
-            public int Id { get; set; }
-            public List<SetInfo> SetList { get; set; }
+            public int Id { get; }
+            public List<SetInfo> SetList { get; }
+            public int Power { get; set; }
 
-            public GameInfo(int id, List<SetInfo> setList)
+            private GameInfo(int id, List<SetInfo> setList)
             {
                 Id = id;
                 SetList = setList;
             }
+
+            public int GetSetPower((int, int, int) highestRgb) => highestRgb.Item1 * highestRgb.Item2 * highestRgb.Item3;
+
 
             public static GameInfo Parse(string input)
             {
@@ -98,13 +121,10 @@ namespace Day2
                         outSetInfo.BlueAmount = colorAmount;
                     }
                 }
-
                 return outSetInfo;
             }
 
-            public bool IsValidSet(SetInfo set) => RedAmount <= set.RedAmount
-                                                   && GreenAmount <= set.GreenAmount
-                                                   && BlueAmount <= set.BlueAmount;
+            public bool IsValidSet(SetInfo set) => RedAmount <= set.RedAmount && GreenAmount <= set.GreenAmount && BlueAmount <= set.BlueAmount;
         }
     }
 }
