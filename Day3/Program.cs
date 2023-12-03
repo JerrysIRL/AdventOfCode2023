@@ -6,12 +6,12 @@ namespace Day3
 {
     internal class Program
     {
-        static string[] rawInput = File.ReadAllLines(@"E:\AdventOfCode\AdventOfCode2023\Day3\Input.txt");
-        static readonly List<char> symbols = new List<char>() { '*', '/', '&', '@', '%', '+', '=', '#', '$', '-' };
-
+        static readonly string[] rawInput = File.ReadAllLines(@"E:\AdventOfCode\AdventOfCode2023\Day3\Input.txt");
+        static readonly List<char> symbols = new List<char>() { '*', '/', '&', '@', '%', '+', '=', '#', '$','-'};
+        
         public static void Main(string[] args)
         {
-            List<PartNumber> NumbersList = new List<PartNumber>();
+            List<PartNumber> numbersList = new List<PartNumber>();
             for (int y = 0; y < rawInput.Length; y++)
             {
                 var line = rawInput[y];
@@ -23,68 +23,29 @@ namespace Day3
                     {
                         partNumber.AddCoordinates((y, x));
                         partNumber.Number += c;
-                    }
-                    else
-                    {
-                        if (partNumber.Number == "")
+                        if (x + 1 < line.Length && !char.IsDigit(line[x + 1]))
                         {
-                            continue;
+                            numbersList.Add(partNumber);
+                            partNumber = new PartNumber("");
                         }
-
-                        NumbersList.Add(partNumber);
-                        partNumber = new PartNumber("");
                     }
                 }
+                numbersList.Add(partNumber);
             }
 
 
             int sum = 0;
-            NumbersList.ForEach(s =>
+            numbersList.ForEach(s =>
             {
                 s.Valid = IsValidPartNumber(s);
                 if (s.Valid)
                 {
                     sum += Int32.Parse(s.Number);
-                    Console.WriteLine(s.Number);
                 }
             });
             Console.WriteLine(sum);
 
-            // string subStr = line.Substring(x, 3);
-            // string resultString = Regex.Match(subStr, @"\d+").Value;
-            // int partNumber = Int32.Parse(resultString);
-            // Console.WriteLine(partNumber);
-            /*bool IsValidPartNumber(PartNumber partNumber)
-            {
-                for (int i = 0; i < partNumber.Number.ToString().Length; i++)
-                {
-                    for (int y = -1; y < 1; y++)
-                    {
-                        if (partNumber.Coordinates.Item1 + y < 0 || partNumber.Coordinates.Item1 + y >= rawInput.Length) { continue; }
-
-                        for (int x = -1; x < 1; x++)
-                        {
-
-                            if (partNumber.Coordinates.Item2 + x + i < 0 || partNumber.Coordinates.Item2 + x + i >= rawInput[partNumber.Coordinates.Item1 + y].Length)
-                            {
-                                continue;
-                            }
-
-                            var c = GetCharFromInput(partNumber.Coordinates.Item1 + y, partNumber.Coordinates.Item2 + x + i);
-                            foreach (var symbol in symbols)
-                            {
-                                if (c == symbol)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return false;
-            }
-        }*/
+            
 
             bool IsValidPartNumber(PartNumber partNumber)
             {
@@ -92,22 +53,19 @@ namespace Day3
                 {
                     int y = coord.Item1;
                     int x = coord.Item2;
-
-                    // Check in an extended 3x3 grid around the current cell (including diagonals)
+                    
                     for (int i = -1; i <= 1; i++)
                     {
                         for (int j = -1; j <= 1; j++)
                         {
                             int newY = y + i;
                             int newX = x + j;
-
-                            // Skip the current cell
+                            
                             if (i == 0 && j == 0)
                             {
                                 continue;
                             }
-
-                            // Skip invalid coordinates
+                            
                             if (newY < 0 || newY >= rawInput.Length || newX < 0 || newX >= rawInput[newY].Length)
                             {
                                 continue;
