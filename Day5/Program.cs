@@ -11,7 +11,7 @@ namespace Day5
 
         public static void Main(string[] args)
         {
-            var seeds = new List<uint>
+            var seeds = new List<long>
             {
                 1367444651, 99920667, 3319921504, 153335682, 67832336, 139859832, 2322838536, 666063790, 1591621692, 111959634, 442852010, 119609663, 733590868, 56288233, 2035874278, 85269124,
                 4145746192, 55841637, 864476811, 347179760
@@ -28,13 +28,24 @@ namespace Day5
 
                 return mapList;
             }).ToList();
+            //for (var i = 0; i < seeds.Count; i++)
+            List<long> locations = new List<long>();
 
-            for (var i = 0; i < seeds.Count; i++)
-                foreach (var section in Sections)
-                    seeds[i] = MapToRange(seeds[i], section);
+            for (int i = 0; i < seeds.Count; i += 2)
+            {
+                for (long j = seeds[i]; j < seeds[i] + seeds[i + 1]; j++)
+                {
+                    long x = j;
+                    foreach (var section in Sections)
+                    {
+                        x = (MapToRange(x, section));
+                    }
+                    locations.Add(x);
+                }
+                Console.WriteLine(i);
+            }
 
-
-            uint MapToRange(uint seed, List<Map> ss)
+            long MapToRange(long seed, List<Map> ss)
             {
                 foreach (var map in ss)
                     if (seed >= map.SourceStart && seed < map.SourceStart + map.RangeLength)
@@ -46,24 +57,23 @@ namespace Day5
                 return seed;
             }
 
-            seeds.Sort();
-            Console.WriteLine(seeds.Min());
+            Console.WriteLine(locations.Min());
         }
 
         public class Map
         {
-            public uint RangeStart { get; set; }
-            public uint SourceStart { get; set; }
-            public uint RangeLength { get; set; }
+            public long RangeStart { get; set; }
+            public long SourceStart { get; set; }
+            public long RangeLength { get; set; }
 
             public static Map Parse(string input)
             {
                 var temp = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 var outMap = new Map
                 {
-                    RangeStart = uint.Parse(temp[0]),
-                    SourceStart = uint.Parse(temp[1]),
-                    RangeLength = uint.Parse(temp[2])
+                    RangeStart = long.Parse(temp[0]),
+                    SourceStart = long.Parse(temp[1]),
+                    RangeLength = long.Parse(temp[2])
                 };
 
                 return outMap;
