@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,14 +32,11 @@ namespace Day5
             }).ToList();
 
             //part 1
-            List<long> stlList = new List<long>();
+            var stlList = new List<long>();
             for (var i = 0; i < seeds.Count; i++)
             {
                 var temp = seeds[i];
-                foreach (var section in sections)
-                {
-                    temp = SeedToLocation(seeds[i], section);
-                }
+                foreach (var section in sections) temp = SeedToLocation(seeds[i], section);
 
                 stlList.Add(temp);
             }
@@ -49,80 +45,69 @@ namespace Day5
             Console.WriteLine(p1);
 
             // part 2
-            //sections.ForEach(l => l.ForEach(m => Console.WriteLine(m.SourceStart)));
             sections.Reverse();
 
             long x = 0;
             while (true)
             {
-                long temp = x;
-                foreach (var section in sections)
-                {
+                var temp = x;
+                foreach (var section in sections) 
                     temp = LocationToSeed(temp, section);
-                }
 
                 if (IsAnyInRange(temp, seeds))
                 {
                     Console.WriteLine(x);
                     break;
                 }
+
                 x++;
             }
-
         }
-        static bool IsAnyInRange(long seed, List<long> seeds)
-        {
-            for (int i = 0; i < seeds.Count; i += 2)
-            {
-                long rangeStart = seeds[i];
 
-                // Check if the next seed is within bounds
+        private static bool IsAnyInRange(long seed, List<long> seeds)
+        {
+            for (var i = 0; i < seeds.Count; i += 2)
+            {
+                var rangeStart = seeds[i];
+
                 if (i + 1 < seeds.Count)
                 {
-                    long nextSeed = seeds[i] + seeds[i + 1];
-                    if (IsInRange(seed, rangeStart, nextSeed))
-                    {
-                        return true;
-                    }
+                    var nextSeed = seeds[i] + seeds[i + 1];
+                    if (IsInRange(seed, rangeStart, nextSeed)) return true;
                 }
             }
 
             return false;
         }
 
-        static bool IsInRange(long seed, long rangeStart, long nextSeed)
+        private static bool IsInRange(long seed, long rangeStart, long nextSeed)
         {
             return seed >= rangeStart && seed < nextSeed;
         }
 
-        static long LocationToSeed(long location, List<Map> mapList)
+        private static long LocationToSeed(long location, List<Map> mapList)
         {
             foreach (var map in mapList)
-            {
                 if (location >= map.RangeStart && location < map.RangeStart + map.RangeLength)
                 {
                     var n = location - map.RangeStart;
                     return map.SourceStart + n;
                 }
-            }
 
             return location;
         }
 
-        static long SeedToLocation(long seed, List<Map> mapList)
+        private static long SeedToLocation(long seed, List<Map> mapList)
         {
             foreach (var map in mapList)
-            {
                 if (seed >= map.SourceStart && seed < map.SourceStart + map.RangeLength)
                 {
                     var n = seed - map.SourceStart;
                     return map.RangeStart + n;
                 }
-            }
 
             return seed;
         }
-
 
         public class Map
         {
