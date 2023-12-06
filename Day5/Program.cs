@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Day5
 {
@@ -16,10 +17,10 @@ namespace Day5
                 1367444651, 99920667, 3319921504, 153335682, 67832336, 139859832, 2322838536, 666063790, 1591621692, 111959634, 442852010, 119609663, 733590868, 56288233, 2035874278, 85269124,
                 4145746192, 55841637, 864476811, 347179760
             };
-            var Sections = new List<List<Map>>();
-            var sections = rawInput.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<List<Map>> sections;
+            var sectionsString = rawInput.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            Sections = sections.Select(s =>
+            sections = sectionsString.Select(s =>
             {
                 var section = s.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 section.RemoveAt(0);
@@ -28,36 +29,30 @@ namespace Day5
 
                 return mapList;
             }).ToList();
-            //for (var i = 0; i < seeds.Count; i++)
-            List<long> locations = new List<long>();
 
-            for (int i = 0; i < seeds.Count; i += 2)
+            for (var i = 0; i < seeds.Count; i++)
             {
-                for (long j = seeds[i]; j < seeds[i] + seeds[i + 1]; j++)
+                foreach (var section in sections)
                 {
-                    long x = j;
-                    foreach (var section in Sections)
-                    {
-                        x = (MapToRange(x, section));
-                    }
-                    locations.Add(x);
+                    seeds[i] = MapToRange(seeds[i], section);
                 }
-                Console.WriteLine(i);
             }
 
-            long MapToRange(long seed, List<Map> ss)
+            var p1 = seeds.Min();
+            Console.WriteLine(p1);
+        }
+
+        static long MapToRange(long seed, List<Map> ss)
+        {
+            foreach (var map in ss)
             {
-                foreach (var map in ss)
-                    if (seed >= map.SourceStart && seed < map.SourceStart + map.RangeLength)
-                    {
-                        var n = seed - map.SourceStart;
-                        return map.RangeStart + n;
-                    }
-
-                return seed;
+                if (seed >= map.SourceStart && seed < map.SourceStart + map.RangeLength)
+                {
+                    var n = seed - map.SourceStart;
+                    return map.RangeStart + n;
+                }
             }
-
-            Console.WriteLine(locations.Min());
+            return seed;
         }
 
         public class Map
