@@ -1,8 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace Day5
 {
@@ -25,26 +25,93 @@ namespace Day5
                 var section = s.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 section.RemoveAt(0);
                 var mapList = new List<Map>();
-                foreach (var line in section) mapList.Add(Map.Parse(line));
+                foreach (var line in section)
+                    mapList.Add(Map.Parse(line));
+                mapList.Reverse();
 
                 return mapList;
             }).ToList();
 
+            //part 1
+            List<long> stlList = new List<long>();
             for (var i = 0; i < seeds.Count; i++)
             {
+                var temp = seeds[i];
                 foreach (var section in sections)
                 {
-                    seeds[i] = MapToRange(seeds[i], section);
+                    temp = SeedToLocation(seeds[i], section);
+                }
+
+                stlList.Add(temp);
+            }
+
+            var p1 = stlList.Min();
+            Console.WriteLine(p1);
+
+            // part 2
+            //sections.ForEach(l => l.ForEach(m => Console.WriteLine(m.SourceStart)));
+            sections.Reverse();
+
+            long x = 0;
+            while (true)
+            {
+                long temp = x;
+                foreach (var section in sections)
+                {
+                    temp = LocationToSeed(temp, section);
+                }
+
+                if (IsAnyInRange(temp, seeds))
+                {
+                    Console.WriteLine(x);
+                    break;
+                }
+                x++;
+            }
+
+        }
+        static bool IsAnyInRange(long seed, List<long> seeds)
+        {
+            for (int i = 0; i < seeds.Count; i += 2)
+            {
+                long rangeStart = seeds[i];
+
+                // Check if the next seed is within bounds
+                if (i + 1 < seeds.Count)
+                {
+                    long nextSeed = seeds[i] + seeds[i + 1];
+                    if (IsInRange(seed, rangeStart, nextSeed))
+                    {
+                        return true;
+                    }
                 }
             }
 
-            var p1 = seeds.Min();
-            Console.WriteLine(p1);
+            return false;
         }
 
-        static long MapToRange(long seed, List<Map> ss)
+        static bool IsInRange(long seed, long rangeStart, long nextSeed)
         {
-            foreach (var map in ss)
+            return seed >= rangeStart && seed < nextSeed;
+        }
+
+        static long LocationToSeed(long location, List<Map> mapList)
+        {
+            foreach (var map in mapList)
+            {
+                if (location >= map.RangeStart && location < map.RangeStart + map.RangeLength)
+                {
+                    var n = location - map.RangeStart;
+                    return map.SourceStart + n;
+                }
+            }
+
+            return location;
+        }
+
+        static long SeedToLocation(long seed, List<Map> mapList)
+        {
+            foreach (var map in mapList)
             {
                 if (seed >= map.SourceStart && seed < map.SourceStart + map.RangeLength)
                 {
@@ -52,8 +119,10 @@ namespace Day5
                     return map.RangeStart + n;
                 }
             }
+
             return seed;
         }
+
 
         public class Map
         {
