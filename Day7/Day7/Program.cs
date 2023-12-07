@@ -48,16 +48,16 @@ namespace Day7
             public int CompareTo(Hand other)
             {
                 var subtract = Type - other.Type;
-
                 if (subtract != 0) return subtract;
-
                 for (var i = 0; i < Cards.Length; i++)
                 {
                     var cOne = Array.IndexOf(Symbols, Cards[i]);
                     var cTwo = Array.IndexOf(Symbols, other.Cards[i]);
-                    if (cOne > cTwo) return 1;
-
-                    if (cTwo > cOne) return -1;
+                    
+                    if (cOne > cTwo) 
+                        return 1;
+                    if (cTwo > cOne) 
+                        return -1;
                 }
 
                 return 0;
