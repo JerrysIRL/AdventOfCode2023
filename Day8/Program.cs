@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -8,16 +7,16 @@ namespace Day8
 {
     internal class Program
     {
-        private static string input =
-            File.ReadAllText(@"C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\Input.txt");
+        private static readonly string Input =
+            File.ReadAllText(@"E:\AdventOfCode\AdventOfCode2023\Day8\Input.txt");
 
         public static void Main(string[] args)
         {
-            Dictionary<string, Tuple<string, string>> map = new Dictionary<string, Tuple<string, string>>();
-            var split = input.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var map = new Dictionary<string, Tuple<string, string>>();
+            var split = Input.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var instructions = split[0];
-            
-            var lines = split[1].Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            var lines = split[1].Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach (var line in lines)
             {
                 var key = line.Substring(0, 3);
@@ -27,55 +26,55 @@ namespace Day8
             }
 
             //part 1
-            string mkey = "AAA";
-            int i = 0;
-            long iterations = 0;
-
+            var i = 0;
             var startEntries = map.Keys.Where(k => k[k.Length - 1] == 'A').ToList();
-
-
-            bool IsAllEntriesZ()
-            {
-                var bList = startEntries.Select(s =>s[s.Length-1] == 'Z').ToList();
-                foreach (var b in bList)
-                {
-                    if (!b)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+            var ghostsIteration = new List<int>();
             
-            do
+            foreach (var entry in startEntries)
             {
-                
-                if (i >= instructions.Length)
+                var mkey = entry;
+                var iterations = 0;
+                do
                 {
-                    iterations += i;
-                    i = 0;
-                }
+                    if (i >= instructions.Length) i = 0;
 
-                List<string> temp = new List<string>();
-                foreach (var entry in startEntries)
-                {
                     if (instructions[i] == 'R')
-                    {
-                        temp.Add(map[entry].Item2);
-                    }
+                        mkey = map[mkey].Item2;
                     else
-                    {
-                        temp.Add(map[entry].Item1);
-                    }
-                }
-                i++;
-                startEntries = temp;
-                
-            } while (IsAllEntriesZ());
-            
-            Console.WriteLine(iterations + i);
-            //Console.WriteLine(mkey);
+                        mkey = map[mkey].Item1;
+
+                    i++;
+                    iterations++;
+                } while (mkey[entry.Length - 1] != 'Z');
+
+                ghostsIteration.Add(iterations);
+            }
+
+            //part 2
+            long result = ghostsIteration[0];
+            for (var j = 0; j < ghostsIteration.Count - 1; j++)
+            {
+                result = Lcm(result, ghostsIteration[j + 1]);
+            }
+
+            Console.WriteLine(result);
+        }
+
+        private static long Gcd(long a, long b)
+        {
+            while (b != 0)
+            {
+                var temp = b;
+                b = a % b;
+                a = temp;
+            }
+
+            return a;
+        }
+
+        private static long Lcm(long a, long b)
+        {
+            return Math.Abs(a * b) / Gcd(a, b);
         }
     }
 }

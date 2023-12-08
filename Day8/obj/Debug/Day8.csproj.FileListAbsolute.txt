@@ -5,3 +5,9 @@ C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.Sug
 C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.CoreCompileInputs.cache
 C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.exe
 C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.pdb
+E:\AdventOfCode\AdventOfCode2023\Day8\obj\Debug\Day8.exe
+E:\AdventOfCode\AdventOfCode2023\Day8\obj\Debug\Day8.pdb
+E:\AdventOfCode\AdventOfCode2023\Day8\bin\Debug\Day8.exe
+E:\AdventOfCode\AdventOfCode2023\Day8\bin\Debug\Day8.pdb
+E:\AdventOfCode\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.AssemblyReference.cache
+E:\AdventOfCode\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.CoreCompileInputs.cache
