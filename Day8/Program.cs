@@ -29,7 +29,7 @@ namespace Day8
             var i = 0;
             var startEntries = map.Keys.Where(k => k[k.Length - 1] == 'A').ToList();
             var ghostsIteration = new List<int>();
-            
+
             foreach (var entry in startEntries)
             {
                 var mkey = entry;
@@ -60,17 +60,7 @@ namespace Day8
             Console.WriteLine(result);
         }
 
-        private static long Gcd(long a, long b)
-        {
-            while (b != 0)
-            {
-                var temp = b;
-                b = a % b;
-                a = temp;
-            }
-
-            return a;
-        }
+        private static long Gcd(long a, long b) => b == 0 ? a : Gcd(b, a % b);
 
         private static long Lcm(long a, long b)
         {
