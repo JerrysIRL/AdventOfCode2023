@@ -1,0 +1,7 @@
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\bin\Debug\Day8.exe
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\bin\Debug\Day8.pdb
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.AssemblyReference.cache
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.SuggestedBindingRedirects.cache
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.csproj.CoreCompileInputs.cache
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.exe
+C:\Users\sergei.maltcev\Projects\AdventOfCode2023\Day8\obj\Debug\Day8.pdb
