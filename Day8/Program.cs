@@ -31,13 +31,12 @@ namespace Day8
             int i = 0;
             long iterations = 0;
 
-            var startEnties = map.Keys.Where(k => k[k.Length - 1] == 'A').ToList();
-            startEnties.ForEach(s => Console.WriteLine(s));
+            var startEntries = map.Keys.Where(k => k[k.Length - 1] == 'A').ToList();
 
 
             bool IsAllEntriesZ()
             {
-                var bList = startEnties.Select(s =>s[s.Length-1] == 'Z').ToList();
+                var bList = startEntries.Select(s =>s[s.Length-1] == 'Z').ToList();
                 foreach (var b in bList)
                 {
                     if (!b)
@@ -48,7 +47,8 @@ namespace Day8
 
                 return false;
             }
-            /*do
+            
+            do
             {
                 
                 if (i >= instructions.Length)
@@ -56,17 +56,23 @@ namespace Day8
                     iterations += i;
                     i = 0;
                 }
-                if (instructions[i] == 'R')
+
+                List<string> temp = new List<string>();
+                foreach (var entry in startEntries)
                 {
-                    mkey = map[mkey].Item2;
-                }
-                else
-                {
-                    mkey = map[mkey].Item1;
+                    if (instructions[i] == 'R')
+                    {
+                        temp.Add(map[entry].Item2);
+                    }
+                    else
+                    {
+                        temp.Add(map[entry].Item1);
+                    }
                 }
                 i++;
-                //iterations++;
-            } while (mkey !="ZZZ");*/
+                startEntries = temp;
+                
+            } while (IsAllEntriesZ());
             
             Console.WriteLine(iterations + i);
             //Console.WriteLine(mkey);
