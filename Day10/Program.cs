@@ -12,7 +12,7 @@ namespace Day10
         public static void Main(string[] args)
         {
             List<Pipe> allPipes = new List<Pipe>();
-            Stack<Pipe> visited = new Stack<Pipe>();
+            Queue<Pipe> visited = new Queue<Pipe>();
             Pipe start = new Pipe();
 
             for (int y = 0; y < input.Length; y++)
@@ -34,29 +34,41 @@ namespace Day10
             }
 
             start.DistanceFromS = 0;
-            visited.Push(start);
+            visited.Enqueue(start);
 
             HashSet<Pipe> closedNodes = new HashSet<Pipe>();
+            
             while (visited.Any())
             {
-                var current = visited.Pop();
-                //if (!current.Visited)
-
+                var current = visited.Dequeue();
                 current.Visited = true;
                 closedNodes.Add(current);
 
-                var neighbours = GetNeighbors(current);
-                foreach (var n in neighbours)
+                var ns = GetNeighbors(current);
+                foreach (var n in ns)
                 {
                     if (!n.Visited)
                     {
-                        visited.Push(n);
+                        visited.Enqueue(n);
                     }
                 }
             }
 
-            var sortedList = closedNodes.OrderBy(o => o.DistanceFromS).ToList();
-            sortedList.ForEach(p => Console.WriteLine(p.Location + " " + p.DistanceFromS));
+
+            List<long> resultList = new List<long>();
+            for (int y = 0; y < input.Length; y++)
+            {
+                for (int x = 0; x < input[y].Length; x++)
+                {
+                    var pipe = GetPipeByLocation((y, x));
+                    resultList.Add(pipe.DistanceFromS);
+                }
+                Console.WriteLine();
+            }
+            resultList.Sort();
+            Console.WriteLine(resultList.Last());
+            
+            
 
             List<Pipe> GetNeighbors(Pipe currentPipe)
             {
@@ -131,7 +143,7 @@ namespace Day10
                 {
                     var u = GetPipeByLocation((currentPipe.Location.y -1, currentPipe.Location.x));
                     if (u == null || u.Visited) return;
-                    if (u.Type == PipeType.V || u.Type == PipeType.NE || u.Type == PipeType.NW)
+                    if (u.Type == PipeType.V || u.Type == PipeType.SW || u.Type == PipeType.SE)
                     {
                         u.DistanceFromS = currentPipe.DistanceFromS + 1;
                         neighbours.Add(u);
@@ -142,7 +154,7 @@ namespace Day10
                 {
                     var d = GetPipeByLocation((currentPipe.Location.y +1, currentPipe.Location.x));
                     if (d == null || d.Visited) return;
-                    if (d.Type == PipeType.V || d.Type == PipeType.SE || d.Type == PipeType.SW)
+                    if (d.Type == PipeType.V || d.Type == PipeType.NW || d.Type == PipeType.NE)
                     {
                         d.DistanceFromS = currentPipe.DistanceFromS + 1;
                         neighbours.Add(d);
