@@ -1,0 +1,6 @@
+E:\AdventOfCode\AdventOfCode2023\Day10\bin\Debug\Day10.exe
+E:\AdventOfCode\AdventOfCode2023\Day10\bin\Debug\Day10.pdb
+E:\AdventOfCode\AdventOfCode2023\Day10\obj\Debug\Day10.csproj.AssemblyReference.cache
+E:\AdventOfCode\AdventOfCode2023\Day10\obj\Debug\Day10.csproj.CoreCompileInputs.cache
+E:\AdventOfCode\AdventOfCode2023\Day10\obj\Debug\Day10.exe
+E:\AdventOfCode\AdventOfCode2023\Day10\obj\Debug\Day10.pdb
