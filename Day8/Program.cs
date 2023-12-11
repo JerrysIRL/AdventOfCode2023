@@ -13,6 +13,7 @@ namespace Day8
         public static void Main(string[] args)
         {
             var map = new Dictionary<string, Tuple<string, string>>();
+            
             var split = Input.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var instructions = split[0];
 

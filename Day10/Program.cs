@@ -22,7 +22,8 @@ namespace Day10
                     Pipe tempPipe = new Pipe()
                     {
                         Location = (y, x),
-                        Type = Pipe.GetType(input[y][x])
+                        Type = Pipe.GetType(input[y][x]),
+                        Symbol = input[y][x]
                     };
                     if (tempPipe.Type == PipeType.Start)
                     {
@@ -37,7 +38,7 @@ namespace Day10
             visited.Enqueue(start);
 
             HashSet<Pipe> closedNodes = new HashSet<Pipe>();
-            
+
             while (visited.Any())
             {
                 var current = visited.Dequeue();
@@ -61,15 +62,15 @@ namespace Day10
                 for (int x = 0; x < input[y].Length; x++)
                 {
                     var pipe = GetPipeByLocation((y, x));
-                    resultList.Add(pipe.DistanceFromS);
+                    Console.Write($"{pipe.Symbol,1}");
                 }
                 Console.WriteLine();
             }
+
             resultList.Sort();
             Console.WriteLine(resultList.Last());
             
             
-
             List<Pipe> GetNeighbors(Pipe currentPipe)
             {
                 List<Pipe> neighbours = new List<Pipe>();
@@ -141,7 +142,7 @@ namespace Day10
 
                 void AddUpPipe()
                 {
-                    var u = GetPipeByLocation((currentPipe.Location.y -1, currentPipe.Location.x));
+                    var u = GetPipeByLocation((currentPipe.Location.y - 1, currentPipe.Location.x));
                     if (u == null || u.Visited) return;
                     if (u.Type == PipeType.V || u.Type == PipeType.SW || u.Type == PipeType.SE)
                     {
@@ -152,7 +153,7 @@ namespace Day10
 
                 void AddDownPipe()
                 {
-                    var d = GetPipeByLocation((currentPipe.Location.y +1, currentPipe.Location.x));
+                    var d = GetPipeByLocation((currentPipe.Location.y + 1, currentPipe.Location.x));
                     if (d == null || d.Visited) return;
                     if (d.Type == PipeType.V || d.Type == PipeType.NW || d.Type == PipeType.NE)
                     {
@@ -170,6 +171,12 @@ namespace Day10
                 return allPipes.FirstOrDefault(pipe => pipe.Location == location);
             }
         }
+
+        static bool CanReachStart(Pipe pipe)
+        {
+            // Check if there is a path to the starting point 'S'
+            return pipe.DistanceFromS != -1;
+        }
     }
 
     public class Pipe
@@ -178,6 +185,7 @@ namespace Day10
         public PipeType Type { get; set; }
         public int DistanceFromS { get; set; }
         public bool Visited { get; set; }
+        public char Symbol { get; set; }
 
         public static PipeType GetType(char letter)
         {
@@ -204,6 +212,7 @@ namespace Day10
             return PipeType.Undefined;
         }
     }
+
 
     public enum PipeType
     {
