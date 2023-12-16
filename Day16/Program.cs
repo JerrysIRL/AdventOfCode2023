@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using System.Security.Policy;
 
 namespace Day16
 {
     internal class Program
     {
         private static readonly string[] Input = File.ReadAllLines(@"E:\AdventOfCode\AdventOfCode2023\Day16\Input.txt");
-        private static Dictionary<Node, (int y, int x)> Grid = new Dictionary<Node, (int y, int x)>();
+        private static readonly Dictionary<Node, (int y, int x)> Grid = new Dictionary<Node, (int y, int x)>();
 
         public static void Main(string[] args)
         {
@@ -26,7 +27,6 @@ namespace Day16
             var nodesToCheck = new HashSet<Node>();
             var startNode = GetNode((0, 0));
 
-            Directions currentDirection;
             SetEnergized(startNode.Coordinates);
             startNode.Direction = Directions.Right;
             nodesToCheck.Add(startNode);
@@ -35,11 +35,11 @@ namespace Day16
             {
                 var currentNode = nodesToCheck.First();
                 nodesToCheck.Remove(currentNode);
-                currentDirection = currentNode.Direction;
-                if (currentDirection == Directions.Right)
+                SetEnergized(currentNode.Coordinates);
+
+
+                if (currentNode.Direction == Directions.Right)
                 {
-                    SetEnergized(currentNode.Coordinates);
-                    SetVisited(currentNode.Coordinates);
                     if (currentNode.Symbol == '/')
                     {
                         var up = GetUpNode(currentNode);
@@ -47,7 +47,7 @@ namespace Day16
                             nodesToCheck.Add(up);
                     }
 
-                    if (currentNode.Symbol.Equals((char)92))
+                    if (currentNode.Symbol == '\\')
                     {
                         var down = GetDownNode(currentNode);
                         if (down != null)
@@ -70,16 +70,13 @@ namespace Day16
                         var node = GetRightNode(currentNode);
                         if (node != null)
                         {
-                            //node.Direction = currentDirection;
-                            AddDirection(node.Coordinates, currentDirection);
                             nodesToCheck.Add(node);
                         }
                     }
                 }
 
-                if (currentDirection == Directions.Up)
+                else if (currentNode.Direction == Directions.Up)
                 {
-                    SetEnergized(currentNode.Coordinates);
                     if (currentNode.Symbol == '/')
                     {
                         var right = GetRightNode(currentNode);
@@ -87,7 +84,7 @@ namespace Day16
                             nodesToCheck.Add(right);
                     }
 
-                    if (currentNode.Symbol.Equals((char)92))
+                    if (currentNode.Symbol == '\\')
                     {
                         var left = GetLeftNode(currentNode);
                         if (left != null)
@@ -110,17 +107,13 @@ namespace Day16
                         var node = GetUpNode(currentNode);
                         if (node != null)
                         {
-                            //node.Direction = currentDirection;
-                            AddDirection(node.Coordinates, currentDirection);
                             nodesToCheck.Add(node);
                         }
                     }
                 }
 
-                if (currentDirection == Directions.Down)
+                else if (currentNode.Direction == Directions.Down)
                 {
-                    SetEnergized(currentNode.Coordinates);
-                    SetVisited(currentNode.Coordinates);
                     if (currentNode.Symbol == '/')
                     {
                         var left = GetLeftNode(currentNode);
@@ -128,7 +121,7 @@ namespace Day16
                             nodesToCheck.Add(left);
                     }
 
-                    if (currentNode.Symbol.Equals((char)92))
+                    if (currentNode.Symbol == '\\')
                     {
                         var right = GetRightNode(currentNode);
                         if (right != null)
@@ -151,17 +144,13 @@ namespace Day16
                         var node = GetDownNode(currentNode);
                         if (node != null)
                         {
-                            //node.Direction = currentDirection;
-                            AddDirection(node.Coordinates, currentDirection);
                             nodesToCheck.Add(node);
                         }
                     }
                 }
 
-                if (currentDirection == Directions.Left)
+                else if (currentNode.Direction == Directions.Left)
                 {
-                    SetEnergized(currentNode.Coordinates);
-                    SetVisited(currentNode.Coordinates);
                     if (currentNode.Symbol == '/')
                     {
                         var up = GetDownNode(currentNode);
@@ -169,7 +158,7 @@ namespace Day16
                             nodesToCheck.Add(up);
                     }
 
-                    if (currentNode.Symbol.Equals((char)92))
+                    if (currentNode.Symbol == '\\')
                     {
                         var down = GetUpNode(currentNode);
                         if (down != null)
@@ -192,26 +181,16 @@ namespace Day16
                         var node = GetLeftNode(currentNode);
                         if (node != null)
                         {
-                            //node.Direction = currentDirection;
-                            AddDirection(node.Coordinates, currentDirection);
                             nodesToCheck.Add(node);
                         }
                     }
                 }
-
             }
 
-            int amount = 0;
-            foreach (var node in Grid.Keys)
-            {
-                if (node.Energized)
-                    amount++;
-            }
+            var sum = Grid.Where(n => n.Key.Energized);
+            Console.WriteLine(sum.Count());
 
-            Console.WriteLine(amount);
-            var sum = Grid.Where(n => n.Key.Energized == true);
-            //Console.WriteLine(sum.Count());
-            /*for (int y = 0; y < Input.Length; y++)
+            for (int y = 0; y < Input.Length; y++)
             {
                 for (int x = 0; x < Input[y].Length; x++)
                 {
@@ -225,7 +204,7 @@ namespace Day16
                 }
 
                 Console.WriteLine();
-            }*/
+            }
         }
 
         private static Node GetUpNode(Node currentNode)
@@ -233,8 +212,8 @@ namespace Day16
             var upNode = GetNode((currentNode.Coordinates.y - 1, currentNode.Coordinates.x));
             if (upNode != null && !upNode.PreviousDirection.Contains(Directions.Up))
             {
-                AddDirection(upNode.Coordinates, Directions.Up);
                 upNode.Direction = Directions.Up;
+                AddDirection(upNode.Coordinates, Directions.Up);
                 return upNode;
             }
 
@@ -246,8 +225,8 @@ namespace Day16
             var downNode = GetNode((currentNode.Coordinates.y + 1, currentNode.Coordinates.x));
             if (downNode != null && !downNode.PreviousDirection.Contains(Directions.Down))
             {
-                AddDirection(downNode.Coordinates, Directions.Down);
                 downNode.Direction = Directions.Down;
+                AddDirection(downNode.Coordinates, Directions.Down);
                 return downNode;
             }
 
@@ -259,8 +238,8 @@ namespace Day16
             var rightNode = GetNode((currentNode.Coordinates.y, currentNode.Coordinates.x + 1));
             if (rightNode != null && !rightNode.PreviousDirection.Contains(Directions.Right))
             {
-                AddDirection(rightNode.Coordinates, Directions.Right);
                 rightNode.Direction = Directions.Right;
+                AddDirection(rightNode.Coordinates, Directions.Right);
                 return rightNode;
             }
 
@@ -272,8 +251,8 @@ namespace Day16
             var leftNode = GetNode((currentNode.Coordinates.y, currentNode.Coordinates.x - 1));
             if (leftNode != null && !leftNode.PreviousDirection.Contains(Directions.Left))
             {
-                AddDirection(leftNode.Coordinates, Directions.Left);
                 leftNode.Direction = Directions.Left;
+                AddDirection(leftNode.Coordinates, Directions.Left);
                 return leftNode;
             }
 
@@ -282,31 +261,31 @@ namespace Day16
 
         static Node GetNode((int y, int x) coord)
         {
-            return Grid.FirstOrDefault(c => c.Value == (coord.y, coord.x)).Key;
+            return Grid.SingleOrDefault(c => c.Value == (coord.y, coord.x)).Key;
         }
 
         static void SetEnergized((int y, int x) coord)
         {
-            Grid.FirstOrDefault(c => c.Value == (coord.y, coord.x)).Key.Energized = true;
+            Grid.SingleOrDefault(c => c.Value == (coord.y, coord.x)).Key.Energized = true;
         }
 
         static void SetVisited((int y, int x) coord)
         {
-            Grid.FirstOrDefault(c => c.Value == (coord.y, coord.x)).Key.Visited = true;
+            Grid.SingleOrDefault(c => c.Value == (coord.y, coord.x)).Key.Visited = true;
         }
 
         static void AddDirection((int y, int x) coord, Directions directionToAdd)
         {
-            Grid.FirstOrDefault(c => c.Value == (coord.y, coord.x)).Key.PreviousDirection.Add(directionToAdd);
+            Grid.SingleOrDefault(c => c.Value == (coord.y, coord.x)).Key.PreviousDirection.Add(directionToAdd);
         }
 
         public class Node
         {
             public char Symbol { get; set; }
             public (int y, int x) Coordinates { get; set; }
-            public bool Energized { get; set; } = false;
-            public Directions Direction { get; set; } = Directions.Undefined;
-            public List<Directions> PreviousDirection { get; set; } = new List<Directions>();
+            public bool Energized { get; set; }
+            public Directions Direction { get; set; }
+            public HashSet<Directions> PreviousDirection { get; set; } = new HashSet<Directions>();
             public bool Visited { get; set; }
         }
 
@@ -315,8 +294,7 @@ namespace Day16
             Up,
             Down,
             Right,
-            Left,
-            Undefined
+            Left
         }
     }
 }
